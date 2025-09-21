@@ -16,7 +16,8 @@ const typeDefs = `
     name: String!
     type: String
     description: String
-    regions: [Region!]! @relationship(type: "HAS_PLACE", direction: IN)
+    regions: [Region!]!
+      @relationship(type: "HAS_PLACE", direction: IN)
   }
 `;
 
@@ -27,7 +28,8 @@ const driver = neo4j.driver(
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 
-neoSchema.getSchema()
+neoSchema
+  .getSchema()
   .then((schema) => {
     const server = new ApolloServer({ schema });
     server.listen().then(({ url }) => {
