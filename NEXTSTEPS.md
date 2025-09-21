@@ -44,10 +44,10 @@ You don’t need to design a huge architecture today.
 But as your project grows, think about these layers:
 
 Layer > Purpose > When to Add
-Front-end (React/Next.js) > Present and interact with data > When you want a web UI
-Authentication & Authorization > Secure who can read/write data > As soon as you plan multiple users
-Data import pipelines > Bring in real datasets > When you move beyond manual Cypher
-Hosting/Deployment (Neo4j Aura, Vercel, etc.) > Run it online 24/7 > When you want it public or multi-user
+- Front-end (React/Next.js) > Present and interact with data > When you want a web UI
+- Authentication & Authorization > Secure who can read/write data > As soon as you plan multiple users
+- Data import pipelines > Bring in real datasets > When you move beyond manual Cypher
+- Hosting/Deployment (Neo4j Aura, Vercel, etc.) > Run it online 24/7 > When you want it public or multi-user
 
 At each step, build a simple vertical slice first (DB → API → UI) before adding another slice.
 
