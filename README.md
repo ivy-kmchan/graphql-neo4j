@@ -84,3 +84,5 @@ Helpers worth rerunning after each Takeout import:
 - `python3 scripts/add_initial_categories.py` → ensures every feature has the core metadata keys.
 - `python3 scripts/populate_prefectures.py` → derives the prefecture from the address when possible (uses romaji + kanji lookups, only fills blanks unless `--force`).
 - `python3 scripts/data_completeness_report.py` → quick snapshot of missing fields.
+- `python3 scripts/match_photos_to_places.py` → cross-reference Japan EXIF photos with saved places (adjust `--radius` as needed).
+- `python3 scripts/apply_photo_visits.py` → mark places as visited using photo matches (honours existing values unless `--force`).
