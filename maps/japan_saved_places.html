@@ -56,6 +56,7 @@
       }).addTo(map);
 
       const savedPlacesUrl = `../data/GoogleMaps/SavedPlacesJP.json?v=${Date.now()}`;
+      const matchesUrl = `../data/photos/place_photo_matches.json?v=${Date.now()}`;
 
       const isValidCoordinate = (coords) =>
         Array.isArray(coords) &&
@@ -64,14 +65,48 @@
         typeof coords[1] === "number" &&
         !(coords[0] === 0 && coords[1] === 0);
 
-      fetch(savedPlacesUrl)
-        .then((response) => {
+      Promise.all([
+        fetch(savedPlacesUrl).then((response) => {
           if (!response.ok) {
             throw new Error(`Failed to load ${savedPlacesUrl}`);
           }
           return response.json();
-        })
-        .then((geojson) => {
+        }),
+        fetch(matchesUrl)
+          .then((response) => (response.ok ? response.json() : null))
+          .catch(() => null),
+      ])
+        .then(([geojson, matches]) => {
+          const visitedLookup = new Map();
+          const unmatchedPhotos = [];
+          if (matches && Array.isArray(matches.matches)) {
+            for (const entry of matches.matches) {
+              const place = entry.place || {};
+              const photos = entry.photos || [];
+              if (!photos.length) continue;
+              const key = place.google_maps_url || place.name;
+              if (!key) continue;
+              const timestamps = photos
+                .map((p) => p.timestamp)
+                .filter(Boolean)
+                .sort();
+              const summary = {
+                count: photos.length,
+                earliest: timestamps[0] || null,
+                latest: timestamps[timestamps.length - 1] || null,
+              };
+              visitedLookup.set(key, summary);
+            }
+            if (Array.isArray(matches.unmatched_photos)) {
+              for (const photo of matches.unmatched_photos) {
+                const coords = photo.coordinates;
+                if (!Array.isArray(coords) || coords.length !== 2) continue;
+                if (!isValidCoordinate([coords[1], coords[0]])) continue;
+                unmatchedPhotos.push(photo);
+              }
+            }
+          }
+
           const filtered = {
             type: "FeatureCollection",
             features: geojson.features.filter((feature) => {
@@ -86,10 +121,13 @@
 
           const markers = L.geoJSON(filtered, {
             pointToLayer: (feature, latlng) => {
+              const key =
+                feature.properties.google_maps_url || feature.properties.location?.name;
+              const isVisited = visitedLookup.has(key);
               return L.circleMarker(latlng, {
                 radius: 5,
-                fillColor: "#eb5757",
-                color: "#b91c1c",
+                fillColor: isVisited ? "#2f9e44" : "#eb5757",
+                color: isVisited ? "#1b5e20" : "#b91c1c",
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8,
@@ -103,6 +141,8 @@
               const date = props.date ? new Date(props.date).toLocaleString() : null;
               const category = props.category || "place";
               const listType = props.saved_list || "star";
+              const key = props.google_maps_url || location.name;
+              const visitSummary = key ? visitedLookup.get(key) : null;
 
               const popupLines = [
                 `<strong>${name}</strong>`,
@@ -125,6 +165,16 @@
                 const visitedLabel = props.visited ? "Yes" : "No";
                 const visitedDate = props.visited_date ? ` (${props.visited_date})` : "";
                 popupLines.push(`<small>Visited: ${visitedLabel}${visitedDate}</small>`);
+              } else if (visitSummary) {
+                const earliest = visitSummary.earliest
+                  ? new Date(visitSummary.earliest).toLocaleString()
+                  : "n/a";
+                const latest = visitSummary.latest
+                  ? new Date(visitSummary.latest).toLocaleString()
+                  : "n/a";
+                popupLines.push(
+                  `<small>Photos nearby: ${visitSummary.count} (range ${earliest} – ${latest})</small>`
+                );
               }
 
               if (props.tabelog_rating) {
@@ -148,6 +198,38 @@
 
           if (markers.getBounds().isValid()) {
             map.fitBounds(markers.getBounds().pad(0.05));
+          }
+
+          if (unmatchedPhotos.length) {
+            const photoLayer = L.layerGroup(
+              unmatchedPhotos.map((photo) => {
+                const [lon, lat] = photo.coordinates;
+                const marker = L.circleMarker([lat, lon], {
+                  radius: 4,
+                  fillColor: "#1c7ed6",
+                  color: "#0b4b94",
+                  opacity: 1,
+                  fillOpacity: 0.6,
+                  weight: 1,
+                });
+                const timestamp = photo.timestamp
+                  ? new Date(photo.timestamp).toLocaleString()
+                  : "Unknown";
+                const pathDisplay = photo.directory
+                  ? `${photo.directory}/${photo.filename}`
+                  : photo.filename;
+                marker.bindPopup(
+                  [
+                    `<strong>Photo</strong>`,
+                    `File: ${pathDisplay || 'n/a'}`,
+                    `Taken: ${timestamp}`,
+                  ].join('<br />')
+                );
+                return marker;
+              })
+            ).addTo(map);
+
+            L.control.layers(null, { 'Photos (unmatched)': photoLayer }, { collapsed: true }).addTo(map);
           }
         })
         .catch((error) => {

@@ -58,6 +58,7 @@ type Activity @node {
 - Action deferred: 243 non-Japan saves were dropped entirely; re-export if you decide to broaden beyond Japan.
 - Follow-up queue: 28 of the zero-coordinate Japan entries describe wide areas (rivers, islands, drives); expect extra effort to pick representative points.
 - Quick map preview: serve the repo (`python3 -m http.server 8000`) and open `http://localhost:8000/maps/japan_saved_places.html` to explore the Leaflet map of current JP places. Use a hard refresh after data edits so the browser pulls fresh JSON.
+- The map now highlights photo-backed places (green markers) and offers a toggleable blue overlay for unmatched photo locations via `data/photos/place_photo_matches.json`.
 - Metadata now includes `properties.category` (`place`/`region`) and `properties.saved_list` (`star`, `heart`, `hotel`, `want_to_go`) so you can mirror Google list types and track custom classifications.
 
 **SavedPlaces Schema Cheatsheet**
