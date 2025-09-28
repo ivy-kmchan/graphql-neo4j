@@ -57,3 +57,4 @@ type Activity @node {
 - Outstanding data action: populate real coordinates for the 91 Japan saved places that exported with `0,0` coordinates (decide on manual lookup vs. Places API enrichment before ingestion).
 - Action deferred: 243 non-Japan saves were dropped entirely; re-export if you decide to broaden beyond Japan.
 - Follow-up queue: 28 of the zero-coordinate Japan entries describe wide areas (rivers, islands, drives); expect extra effort to pick representative points.
+- Quick map preview: serve the repo (`python3 -m http.server 8000`) and open `http://localhost:8000/maps/japan_saved_places.html` to explore the Leaflet map of current JP places. Use a hard refresh after data edits so the browser pulls fresh JSON.

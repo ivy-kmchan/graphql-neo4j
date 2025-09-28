@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Japan Saved Places Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+
+      .leaflet-tooltip.place-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      const MAP_BOUNDS_JAPAN = L.latLngBounds(
+        [20.214581, 122.93457],
+        [45.711204, 154.205541]
+      );
+
+      const map = L.map("map", {
+        zoomControl: true,
+        minZoom: 4,
+        maxZoom: 17,
+        maxBounds: MAP_BOUNDS_JAPAN.pad(0.25),
+      }).setView([36.2048, 138.2529], 5);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const savedPlacesUrl = `../data/GoogleMaps/SavedPlacesJP.json?v=${Date.now()}`;
+
+      const isValidCoordinate = (coords) =>
+        Array.isArray(coords) &&
+        coords.length === 2 &&
+        typeof coords[0] === "number" &&
+        typeof coords[1] === "number" &&
+        !(coords[0] === 0 && coords[1] === 0);
+
+      fetch(savedPlacesUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to load ${savedPlacesUrl}`);
+          }
+          return response.json();
+        })
+        .then((geojson) => {
+          const filtered = {
+            type: "FeatureCollection",
+            features: geojson.features.filter((feature) => {
+              const coords = feature?.geometry?.coordinates;
+              if (!isValidCoordinate(coords)) {
+                return false;
+              }
+              const [lon, lat] = coords;
+              return MAP_BOUNDS_JAPAN.contains([lat, lon]);
+            }),
+          };
+
+          const markers = L.geoJSON(filtered, {
+            pointToLayer: (feature, latlng) => {
+              return L.circleMarker(latlng, {
+                radius: 5,
+                fillColor: "#eb5757",
+                color: "#b91c1c",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8,
+              });
+            },
+            onEachFeature: (feature, layer) => {
+              const props = feature.properties || {};
+              const location = props.location || {};
+              const name = location.name || "Unnamed";
+              const address = location.address || "Address unavailable";
+              const date = props.date ? new Date(props.date).toLocaleString() : null;
+
+              const popupLines = [
+                `<strong>${name}</strong>`,
+                address,
+              ];
+
+              if (date) {
+                popupLines.push(`<small>Saved: ${date}</small>`);
+              }
+
+              if (props.google_maps_url) {
+                popupLines.push(
+                  `<a href="${props.google_maps_url}" target="_blank" rel="noopener">Open in Google Maps</a>`
+                );
+              }
+
+              layer.bindPopup(popupLines.join("<br />"));
+              layer.bindTooltip(name, { direction: "top", className: "place-label" });
+            },
+          }).addTo(map);
+
+          if (markers.getBounds().isValid()) {
+            map.fitBounds(markers.getBounds().pad(0.05));
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          alert(`Unable to load saved places: ${error.message}`);
+        });
+    </script>
+  </body>
+</html>
