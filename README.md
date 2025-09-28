@@ -58,3 +58,28 @@ type Activity @node {
 - Action deferred: 243 non-Japan saves were dropped entirely; re-export if you decide to broaden beyond Japan.
 - Follow-up queue: 28 of the zero-coordinate Japan entries describe wide areas (rivers, islands, drives); expect extra effort to pick representative points.
 - Quick map preview: serve the repo (`python3 -m http.server 8000`) and open `http://localhost:8000/maps/japan_saved_places.html` to explore the Leaflet map of current JP places. Use a hard refresh after data edits so the browser pulls fresh JSON.
+- Metadata now includes `properties.category` (`place`/`region`) and `properties.saved_list` (`star`, `heart`, `hotel`, `want_to_go`) so you can mirror Google list types and track custom classifications.
+
+**SavedPlaces Schema Cheatsheet**
+- GeoJSON top level: `FeatureCollection` with entries that always use `type: "Feature"` and `geometry.type: "Point"` (Google-supplied, keep untouched for GeoJSON compatibility).
+- `geometry.coordinates`: `[longitude, latitude]`; sourced from Google but we may backfill missing values—treat updates as local overrides.
+- `properties.date`: ISO 8601 timestamp of when the place was saved in Google (immutable snapshot; do not edit).
+- `properties.google_maps_url`: deep link back to the original listing (immutable identifier; do not edit).
+- `properties.location`: Google-provided metadata:
+  - `name`
+  - `address`
+  - `country_code`
+  (We can correct `name`/`address` locally when Google omits them; `country_code` mirrors the inferred JP tagging script.)
+- `properties.category`: **App-added** (`place`/`region` today; extend for seasonal or lodging types later).
+- `properties.saved_list`: **App-added** (`star`, `heart`, `hotel`, `want_to_go`; future lists can be appended as we import more Takeout files).
+- `properties.prefecture`: **App-added** free text, usually a JP prefecture name for filtering.
+- `properties.notes`: **App-added** free-form notes.
+- `properties.visited`: **App-added** (`true`/`false`/`null`) to track whether we’ve been there.
+- `properties.visited_date`: **App-added** ISO string when we actually visited.
+- `properties.tabelog_rating`: **App-added** numeric/string rating for restaurants/hotels (optional).
+- `properties.Comment`: Google’s placeholder for zero-coordinate exports (“No location information…”); safe to ignore or strip once coordinates are restored.
+
+Helpers worth rerunning after each Takeout import:
+- `python3 scripts/add_initial_categories.py` → ensures every feature has the core metadata keys.
+- `python3 scripts/populate_prefectures.py` → derives the prefecture from the address when possible (uses romaji + kanji lookups, only fills blanks unless `--force`).
+- `python3 scripts/data_completeness_report.py` → quick snapshot of missing fields.

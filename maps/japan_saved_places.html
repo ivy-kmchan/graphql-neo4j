@@ -101,14 +101,38 @@
               const name = location.name || "Unnamed";
               const address = location.address || "Address unavailable";
               const date = props.date ? new Date(props.date).toLocaleString() : null;
+              const category = props.category || "place";
+              const listType = props.saved_list || "star";
 
               const popupLines = [
                 `<strong>${name}</strong>`,
                 address,
               ];
 
+              if (props.prefecture) {
+                popupLines.push(`Prefecture: ${props.prefecture}`);
+              }
+
               if (date) {
                 popupLines.push(`<small>Saved: ${date}</small>`);
+              }
+
+              popupLines.push(
+                `<small>Category: ${category}&nbsp;&nbsp;List: ${listType}</small>`
+              );
+
+              if (props.visited !== null) {
+                const visitedLabel = props.visited ? "Yes" : "No";
+                const visitedDate = props.visited_date ? ` (${props.visited_date})` : "";
+                popupLines.push(`<small>Visited: ${visitedLabel}${visitedDate}</small>`);
+              }
+
+              if (props.tabelog_rating) {
+                popupLines.push(`<small>Tabelog rating: ${props.tabelog_rating}</small>`);
+              }
+
+              if (props.notes) {
+                popupLines.push(`<em>${props.notes}</em>`);
               }
 
               if (props.google_maps_url) {
