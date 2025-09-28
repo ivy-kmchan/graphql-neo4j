@@ -54,3 +54,6 @@ type Activity @node {
 }
 3. Build a Front-End
 - Create a small web app (React/Next.js) using Apollo Client to display the data.
+- Outstanding data action: populate real coordinates for the 91 Japan saved places that exported with `0,0` coordinates (decide on manual lookup vs. Places API enrichment before ingestion).
+- Action deferred: 243 non-Japan saves were dropped entirely; re-export if you decide to broaden beyond Japan.
+- Follow-up queue: 28 of the zero-coordinate Japan entries describe wide areas (rivers, islands, drives); expect extra effort to pick representative points.
