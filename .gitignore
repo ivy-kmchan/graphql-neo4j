@@ -13,3 +13,5 @@ data/
 # OS / editor cruft
 .DS_Store
 *.log
+
+!README.md

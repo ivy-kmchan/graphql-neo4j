@@ -1,5 +1,11 @@
 # graphql-neo4j-project
 
+## Setup
+1. Install Node dependencies: `npm install`
+2. (Optional) Create a Python virtual environment for the data scripts: `python3 -m venv .venv && source .venv/bin/activate`
+3. Install Python tools if you use the notebooks or helpers: `pip install -r requirements.txt`
+4. Copy `.env.example` to `.env` and fill in your Neo4j connection secrets before starting the API.
+
 1️⃣ Project Initialization
 - Create the Git repository (done)
 - Initialize a Node.js project (done)
