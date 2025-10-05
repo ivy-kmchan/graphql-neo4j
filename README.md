@@ -6,7 +6,8 @@
 #note that in my neo4j environment I have deleted the previous DB and created a new instance called travel_app, then configured the travel_app instance so it no longer clashes with my other projects
 3. in neo4j desktop, find the database for travel_app, then: 
 4. start the instance, make sure it is running, then connect > query
-5. EZ-Seed: `npm run seed` populates the `travel_app` Neo4j database with places from `data/GoogleMaps/SavedPlaces.json`.
+5. EZ-Seed: `npm run seed` populates/updates the `travel_app` Neo4j database with places from `data/GoogleMaps/SavedPlaces.json`.
+5. Apollo for this project defaults to port `4010` so it can run alongside `journal_club`; override with `PORT=xxxx` if needed.
 5. EITHER, run index.js to start APOLLO STUDIO: `node scripts/index.js` OR
 5. OR, you can also run `npm start` which does the same thing
 6. apollo studio has be set to open in firefox as default because it cannot run in safari

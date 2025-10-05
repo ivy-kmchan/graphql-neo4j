@@ -15,23 +15,41 @@ const typeDefs = `
 
   type Place @node {
     name: String!
+    googleMapsUrl: String!
     type: String
     description: String
+    address: String
+    latitude: Float
+    longitude: Float
+    prefecture: String
+    savedList: String
+    visited: Boolean
+    visitedDate: DateTime
+    tabelogRating: String
+    dateSaved: DateTime
     regions: [Region!]!
       @relationship(type: "HAS_PLACE", direction: IN)
   }
 `;
+
+const database = process.env.NEO4J_DATABASE || 'travel';
+// Default to a project-specific port so it can run alongside other Apollo servers.
+const port = process.env.PORT ? Number(process.env.PORT) : 4010;
 
 const driver = neo4j.driver(
   process.env.NEO4J_URI,
   neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD)
 );
 
+const sessionConfig = { database };
+
 const neoSchema = new Neo4jGraphQL({
   typeDefs,
   driver,
   config: {
-    database: process.env.NEO4J_DATABASE,
+    driverConfig: {
+      database,
+    },
   },
 });
 
@@ -54,18 +72,39 @@ const openInFirefox = (url) => {
   });
 };
 
-console.log('Connecting to', process.env.NEO4J_URI, '→ DB:', process.env.NEO4J_DATABASE);
+console.log('Connecting to', process.env.NEO4J_URI, '→ DB:', database);
 
-neoSchema
-  .getSchema()
-  .then((schema) => {
-    const server = new ApolloServer({ schema });
-    server.listen().then(({ url }) => {
-      console.log(`🚀 GraphQL API ready at ${url}`);
-      // Remove this line (and the openInFirefox helper) to revert to default browser behavior.
-      openInFirefox(url);
+const startServer = async () => {
+  try {
+    const schema = await neoSchema.getSchema();
+    const server = new ApolloServer({
+      schema,
+      context: ({ req }) => ({
+        req,
+        driver,
+        sessionConfig,
+      }),
     });
-  })
-  .catch((err) => {
-    console.error('Schema generation failed:', err);
-  });
+
+    const { url } = await server.listen({ port });
+    console.log(`🚀 GraphQL API ready at ${url} (DB: ${database})`);
+    // Remove this line (and the openInFirefox helper) to revert to default browser behavior.
+    openInFirefox(url);
+
+    const shutdown = async () => {
+      console.log('Shutting down Apollo Server...');
+      await server.stop();
+      await driver.close();
+      process.exit(0);
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+  } catch (error) {
+    console.error('Schema generation failed:', error);
+    await driver.close();
+    process.exit(1);
+  }
+};
+
+startServer();
