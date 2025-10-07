@@ -2,7 +2,7 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import neo4j from 'neo4j-driver';
-import { driver } from './db/neo4j.js';
+import { driver, getSession, database } from './db/neo4j.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -125,7 +125,7 @@ async function main() {
   // Use the getSession function to respect the NEO4J_DATABASE env var
   // const session = driver.session({ defaultAccessMode: neo4j.session.WRITE });
   const session = getSession(neo4j.session.WRITE);
-  console.log(`Seeding data into Neo4j database: ${database}`); 
+  console.log(`Seeding data into Neo4j database: ${database}`);
 
   try {
     console.log(`Preparing constraints...`);
