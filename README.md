@@ -1,5 +1,8 @@
 # graphql-neo4j-project
 
+# data file
+1. the root directory contains a copy of the file SavedPlaces.json which is the source file for the neo4j seeder js. You need to place this file into data/GoogleMaps/SavedPlaces.json in your local repo
+
 # Process flow (after first time set up)
 1. open the project in VSCode ~/Projects/GraphQL_Neo4j
 2. OPTIONAL activate virtual environment: `source .venv/bin/activate`
