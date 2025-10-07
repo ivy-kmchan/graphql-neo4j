@@ -16,11 +16,11 @@
 1. Install Node dependencies: `npm install`
 2. (Optional) Create a Python virtual environment for the data scripts: `python3 -m venv .venv && source .venv/bin/activate`
 3. Install Python tools if you use the notebooks or helpers: `pip install -r requirements.txt`
-4. Update the `.env` file with your Neo4j connection secrets before starting the API.
+4. Copy `.env.example` to `.env` and update the values with your machine's Neo4j connection secrets before starting the API.
 
 ## Neo4j config reference
-- The folder `neo4j config settings/` contains `neo4j.conf`, a copy of the Desktop configuration that matches this project.
-- When setting up Neo4j on a new machine, open Neo4j Desktop → **Manage → Settings** for the `travel` database and mirror the values from that file. Key overrides compared to the defaults:
+- The folder `neo4j config settings/` contains `neo4j.conf.example`, a copy of the Desktop configuration that matches this project.
+- When setting up Neo4j on a new machine, duplicate it to `neo4j.conf`, open Neo4j Desktop → **Manage → Settings** for the `travel` database, and mirror the values from that file. Key overrides compared to the defaults:
   - **Bolt connector**
     - `server.bolt.enabled=true`
     - `server.bolt.listen_address=:7689` (default is `:7687`)
