@@ -43,14 +43,21 @@ const driver = neo4j.driver(
 
 const sessionConfig = { database };
 
+//const neoSchema = new Neo4jGraphQL({
+//  typeDefs,
+//  driver,
+//  config: {
+//    driverConfig: {
+//      database,
+//    },
+//  },
+//});
+
+// Updated to match latest Neo4jGraphQL constructor options
 const neoSchema = new Neo4jGraphQL({
   typeDefs,
   driver,
-  config: {
-    driverConfig: {
-      database,
-    },
-  },
+  driverConfig: { database },
 });
 
 // Opens the server URL in Firefox instead of the system default browser.

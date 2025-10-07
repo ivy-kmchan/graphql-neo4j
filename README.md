@@ -3,10 +3,10 @@
 # Process flow (after first time set up)
 1. open the project in VSCode ~/Projects/GraphQL_Neo4j
 2. OPTIONAL activate virtual environment: `source .venv/bin/activate`
-#note that in my neo4j environment I have deleted the previous DB and created a new instance called travel_app, then configured the travel_app instance so it no longer clashes with my other projects
-3. in neo4j desktop, find the database for travel_app, then: 
+#note that in my neo4j environment I have deleted the previous DB and created a new instance called travel, then configured the travel instance so it no longer clashes with my other projects
+3. in neo4j desktop, find the database for travel, then: 
 4. start the instance, make sure it is running, then connect > query
-5. EZ-Seed: `npm run seed` populates/updates the `travel_app` Neo4j database with places from `data/GoogleMaps/SavedPlaces.json`.
+5. EZ-Seed: `npm run seed` populates/updates the `travel` Neo4j database with places from `data/GoogleMaps/SavedPlaces.json`.
 5. Apollo for this project defaults to port `4010` so it can run alongside `journal_club`; override with `PORT=xxxx` if needed.
 5. EITHER, run index.js to start APOLLO STUDIO: `node scripts/index.js` OR
 5. OR, you can also run `npm start` which does the same thing
@@ -16,7 +16,20 @@
 1. Install Node dependencies: `npm install`
 2. (Optional) Create a Python virtual environment for the data scripts: `python3 -m venv .venv && source .venv/bin/activate`
 3. Install Python tools if you use the notebooks or helpers: `pip install -r requirements.txt`
-4. Copy `.env.example` to `.env` and fill in your Neo4j connection secrets before starting the API.
+4. Copy `.env.example` to `.env` and update the values with your machine's Neo4j connection secrets before starting the API.
+
+## Neo4j config reference
+- The folder `neo4j config settings/` contains `neo4j.conf.example`, a copy of the Desktop configuration that matches this project.
+- When setting up Neo4j on a new machine, duplicate it to `neo4j.conf`, open Neo4j Desktop → **Manage → Settings** for the `travel` database, and mirror the values from that file. Key overrides compared to the defaults:
+  - **Bolt connector**
+    - `server.bolt.enabled=true`
+    - `server.bolt.listen_address=:7689` (default is `:7687`)
+    - `server.bolt.advertised_address=:7689` (default is `:7687`)
+  - **HTTP connector**
+    - `server.http.enabled=true`
+    - `server.http.listen_address=:7476` (default is `:7474`)
+    - `server.http.advertised_address=:7476` (default is `:7474`)
+- After applying the settings, restart the database so the changes take effect.
 
 1️⃣ Project Initialization
 - Create the Git repository (done)
