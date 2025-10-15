@@ -7,33 +7,59 @@ import { exec } from 'child_process';
 dotenv.config();
 
 const typeDefs = `
+  type Query {
+    placesCount: Int!
+  }
+
   type Region @node {
     name: String!
     places: [Place!]!
       @relationship(type: "HAS_PLACE", direction: OUT)
   }
 
+  type ActivityCategory @node {
+    name: String!
+    description: String
+    places: [Place!]!
+      @relationship(type: "HAS_ACTIVITY", direction: IN)
+  }
+
+  type CuisineType @node {
+    name: String!
+    description: String
+    places: [Place!]!
+      @relationship(type: "SERVES_CUISINE", direction: IN)
+  }
+
+  type TransportType @node {
+    name: String!
+    description: String
+  }
+
   type Place @node {
     name: String!
-    googleMapsUrl: String!
+    google_maps_url: String
     type: String
     description: String
     address: String
     latitude: Float
     longitude: Float
     prefecture: String
-    savedList: String
+    saved_list: String
     visited: Boolean
-    visitedDate: DateTime
-    tabelogRating: String
-    dateSaved: DateTime
+    category: String
+    activity_type: String
+    date: String
     regions: [Region!]!
       @relationship(type: "HAS_PLACE", direction: IN)
+    activities: [ActivityCategory!]!
+      @relationship(type: "HAS_ACTIVITY", direction: OUT)
+    cuisines: [CuisineType!]!
+      @relationship(type: "SERVES_CUISINE", direction: OUT)
   }
 `;
 
 const database = process.env.NEO4J_DATABASE || 'travel';
-// Default to a project-specific port so it can run alongside other Apollo servers.
 const port = process.env.PORT ? Number(process.env.PORT) : 4010;
 
 const driver = neo4j.driver(
@@ -43,27 +69,35 @@ const driver = neo4j.driver(
 
 const sessionConfig = { database };
 
-//const neoSchema = new Neo4jGraphQL({
-//  typeDefs,
-//  driver,
-//  config: {
-//    driverConfig: {
-//      database,
-//    },
-//  },
-//});
-
-// Updated to match latest Neo4jGraphQL constructor options
+// ✅ Integrate the custom resolver directly in the Neo4jGraphQL schema
 const neoSchema = new Neo4jGraphQL({
   typeDefs,
   driver,
   driverConfig: { database },
+  resolvers: {
+    Query: {
+      placesCount: async () => {
+        console.log('placesCount resolver called');
+        const session = driver.session({ database });
+        try {
+          const result = await session.run('MATCH (p:Place) RETURN count(p) as count');
+          const count = result.records[0]?.get('count')?.toNumber?.() ?? 0;
+          console.log('placesCount →', count);
+          return count;
+        } catch (error) {
+          console.error('Error in placesCount resolver:', error);
+          return 0;
+        } finally {
+          await session.close();
+        }
+      },
+    },
+  },
 });
 
-// Opens the server URL in Firefox instead of the system default browser.
+// Opens the server URL in Firefox instead of the default browser
 const openInFirefox = (url) => {
   let command;
-
   if (process.platform === 'darwin') {
     command = `open -a "Firefox" "${url}"`;
   } else if (process.platform === 'win32') {
@@ -84,6 +118,7 @@ console.log('Connecting to', process.env.NEO4J_URI, '→ DB:', database);
 const startServer = async () => {
   try {
     const schema = await neoSchema.getSchema();
+
     const server = new ApolloServer({
       schema,
       context: ({ req }) => ({
@@ -95,7 +130,6 @@ const startServer = async () => {
 
     const { url } = await server.listen({ port });
     console.log(`🚀 GraphQL API ready at ${url} (DB: ${database})`);
-    // Remove this line (and the openInFirefox helper) to revert to default browser behavior.
     openInFirefox(url);
 
     const shutdown = async () => {
