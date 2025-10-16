@@ -112,6 +112,9 @@ Navigate to `http://localhost:8501` to start chatting!
 4. **"OpenAI API key not found"**
    - Solution: Add `OPENAI_API_KEY=your_key_here` to `.env` file
 
+5. **"Failed to initialize chatbot: 1 validation error for ChatOpenAI root Client.init() got an unexpected keyword argument 'proxies' (type=type_error)"**
+   - Solution: requirements updated, make sure to re-install requirements
+
 ### **Quick Health Check:**
 ```bash
 # Test database connection

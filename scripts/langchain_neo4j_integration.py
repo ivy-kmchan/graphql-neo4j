@@ -8,8 +8,7 @@ import os
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
-from langchain_community.llms import OpenAI
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain.chains import LLMChain

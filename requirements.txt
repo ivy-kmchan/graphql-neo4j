@@ -21,7 +21,7 @@ fastjsonschema==2.21.2
 fqdn==1.5.1
 h11==0.16.0
 httpcore==1.0.9
-httpx==0.28.1
+httpx==0.27.2
 idna==3.10
 ipykernel==6.30.1
 ipython==9.5.0
@@ -47,6 +47,9 @@ jupyterlab_pygments==0.3.0
 jupyterlab_server==2.27.3
 jupyterlab_widgets==3.0.15
 lark==1.3.0
+langchain==0.2.15
+langchain-community==0.2.15
+langchain-openai==0.1.7
 MarkupSafe==3.0.2
 matplotlib-inline==0.1.7
 mistune==3.1.4
@@ -54,11 +57,13 @@ nbclient==0.10.2
 nbconvert==7.16.6
 nbformat==5.10.4
 nest-asyncio==1.6.0
+neo4j==5.25.0
 notebook==7.4.6
 notebook_shim==0.2.4
-packaging==25.0
+packaging==24.1
 pandocfilters==1.5.1
 parso==0.8.5
+openai==1.51.0
 pexpect==4.9.0
 platformdirs==4.4.0
 prometheus_client==0.23.1
@@ -69,6 +74,7 @@ pure_eval==0.2.3
 pycparser==2.23
 Pygments==2.19.2
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
 python-json-logger==3.3.0
 PyYAML==6.0.3
 pyzmq==27.1.0
@@ -97,3 +103,4 @@ webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
 widgetsnbextension==4.0.14
+streamlit==1.50.0
