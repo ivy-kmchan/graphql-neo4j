@@ -8,7 +8,7 @@ venv/
 # environment files
 .env
 
-# local data exports
+# local data exports (seed-data/ is tracked, data/ is ignored)
 data/
 
 # sample config only; real one lives in local Neo4j Desktop app
