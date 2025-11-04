@@ -33,7 +33,7 @@ class TravelChatbot:
         
         # Initialize LLM (you'll need to set OPENAI_API_KEY in .env)
         self.llm = ChatOpenAI(
-            model_name="gpt-3.5-turbo",
+            model_name="gpt-4o-mini",
             temperature=0,  # Lower temperature for more factual responses
             openai_api_key=os.getenv("OPENAI_API_KEY"),
             model_kwargs={
