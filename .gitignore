@@ -7,6 +7,8 @@ venv/
 
 # environment files
 .env
+.streamlit/secrets.toml
+streamlit-secrets.toml
 
 # local data exports (seed-data/ is tracked, data/ is ignored)
 data/
@@ -17,5 +19,8 @@ neo4j config settings/neo4j.conf
 # OS / editor cruft
 .DS_Store
 *.log
+__pycache__/
+*.pyc
+*.pyo
 
 !README.md

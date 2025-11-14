@@ -1,0 +1,7 @@
+Travel app chatbot questions
+What can i do in...? 
+Will be any festivals happening here....? 
+Are there any temples on the way from x to y...? 
+show me the best way from x to y...? 
+what's the nicest driving route near...? 
+I'm here... what should i eat?
