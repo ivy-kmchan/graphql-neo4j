@@ -8,7 +8,6 @@ venv/
 # environment files
 .env
 .streamlit/secrets.toml
-streamlit-secrets.toml
 
 # local data exports (seed-data/ is tracked, data/ is ignored)
 data/
