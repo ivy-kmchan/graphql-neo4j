@@ -6,9 +6,17 @@ This provides a user-friendly web interface for interacting with the travel data
 
 import streamlit as st
 import os
+import sys
+from pathlib import Path
 from dotenv import load_dotenv
-from langchain_neo4j_integration import TravelChatbot
 import time
+
+# Add scripts directory to Python path for imports
+script_dir = Path(__file__).parent
+if str(script_dir) not in sys.path:
+    sys.path.insert(0, str(script_dir))
+
+from langchain_neo4j_integration import TravelChatbot
 
 load_dotenv()
 

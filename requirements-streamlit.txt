@@ -1,0 +1,20 @@
+# Core dependencies for Streamlit chatbot deployment
+streamlit==1.50.0
+neo4j==5.25.0
+python-dotenv==1.0.1
+
+# LangChain
+langchain==0.2.15
+langchain-community==0.2.15
+langchain-openai==0.1.7
+
+# OpenAI
+openai==1.51.0
+
+# Required utilities
+requests==2.32.5
+certifi==2025.8.3
+charset-normalizer==3.4.3
+idna==3.10
+urllib3==2.5.0
+
