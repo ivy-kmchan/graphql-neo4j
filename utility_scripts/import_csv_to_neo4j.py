@@ -13,10 +13,10 @@ load_dotenv()
 
 class CSVImporter:
     def __init__(self):
-        self.uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+        self.uri = os.getenv("NEO4J_URI")  # Required - set in .env
         self.user = os.getenv("NEO4J_USER", "neo4j")
-        self.password = os.getenv("NEO4J_PASSWORD")
-        self.database = os.getenv("NEO4J_DATABASE", "travel")
+        self.password = os.getenv("NEO4J_PASSWORD")  # Required - set in .env
+        self.database = os.getenv("NEO4J_DATABASE", "neo4j")  # Changed from 'travel' to 'neo4j' for Aura
         
         if not self.password:
             raise ValueError("NEO4J_PASSWORD not set in .env file")

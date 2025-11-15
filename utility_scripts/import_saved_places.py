@@ -18,7 +18,7 @@ SOURCE = Path("data/GoogleMaps/SavedPlaces.json")
 
 class Neo4jImporter:
     def __init__(self):
-        self.uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+        self.uri = os.getenv("NEO4J_URI")  # Required - set in .env
         self.user = os.getenv("NEO4J_USER", "neo4j")
         self.password = os.getenv("NEO4J_PASSWORD")
         self.database = os.getenv("NEO4J_DATABASE", "neo4j")

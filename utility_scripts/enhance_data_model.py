@@ -15,7 +15,7 @@ class DataModelEnhancer:
             os.getenv('NEO4J_URI'),
             auth=(os.getenv('NEO4J_USER'), os.getenv('NEO4J_PASSWORD'))
         )
-        self.database = os.getenv('NEO4J_DATABASE', 'travel')
+        self.database = os.getenv('NEO4J_DATABASE', 'neo4j')  # Changed from 'travel' to 'neo4j' for Aura
     
     def analyze_place_names(self):
         """Analyze place names to identify categories."""

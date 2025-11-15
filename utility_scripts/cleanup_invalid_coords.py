@@ -5,7 +5,7 @@ import os
 from neo4j import GraphDatabase
 
 def main():
-    uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+    uri = os.getenv("NEO4J_URI")  # Required - set in .env
     user = os.getenv("NEO4J_USER", "neo4j")
     password = os.getenv("NEO4J_PASSWORD")
     

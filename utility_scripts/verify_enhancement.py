@@ -13,7 +13,8 @@ def main():
         auth=(os.getenv('NEO4J_USER'), os.getenv('NEO4J_PASSWORD'))
     )
     
-    with driver.session(database='travel') as session:
+    database = os.getenv("NEO4J_DATABASE", "neo4j")  # Changed from 'travel' to 'neo4j' for Aura
+    with driver.session(database=database) as session:
         # Check new node types
         result = session.run('CALL db.labels()')
         labels = [record['label'] for record in result]
