@@ -21,32 +21,6 @@
 3. Install Python tools if you use the notebooks or helpers: `pip install -r requirements.txt`
 4. Copy `.env.example` to `.env` and update the values with your machine's Neo4j connection secrets before starting the API.
 
-## Neo4j Configuration
-
-**Instance Name**: `travel_app` (recorded in `neo4j.conf` line 7)
-
-This project uses unique Neo4j ports to avoid conflicts with other instances:
-- **HTTP (Browser UI)**: `7476` (default: 7474)
-- **Bolt (Database)**: `7689` (default: 7687)
-
-**Port Progression Across Projects**:
-- `journal_club`: 7687/7474 (defaults)
-- `Japan_2026`: 7688/7475
-- `travel_app` (this project): 7689/7476
-
-### Neo4j Config Reference
-- The folder `neo4j config settings/` contains `neo4j.conf.example`, a copy of the Desktop configuration that matches this project.
-- When setting up Neo4j on a new machine, duplicate it to `neo4j.conf`, open Neo4j Desktop → **Manage → Settings** for the `travel` database, and mirror the values from that file. Key overrides compared to the defaults:
-  - **Bolt connector**
-    - `server.bolt.enabled=true`
-    - `server.bolt.listen_address=:7689` (default is `:7687`)
-    - `server.bolt.advertised_address=:7689` (default is `:7687`)
-  - **HTTP connector**
-    - `server.http.enabled=true`
-    - `server.http.listen_address=:7476` (default is `:7474`)
-    - `server.http.advertised_address=:7476` (default is `:7474`)
-- After applying the settings, restart the database so the changes take effect.
-
 1️⃣ Project Initialization
 - Create the Git repository (done)
 - Initialize a Node.js project (done)

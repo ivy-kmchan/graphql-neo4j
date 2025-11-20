@@ -1,0 +1,10 @@
+metric,count
+total_places,2677
+total_regions,47
+total_activities,10
+total_cuisines,12
+has_activity_rels,2092
+serves_cuisine_rels,328
+has_place_rels,2634
+places_with_coordinates,2677
+visited_places,197
