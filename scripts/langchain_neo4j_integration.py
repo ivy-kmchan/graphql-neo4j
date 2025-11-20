@@ -26,7 +26,7 @@ class TravelChatbot:
         self.uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
         self.user = os.getenv("NEO4J_USER", "neo4j")
         self.password = os.getenv("NEO4J_PASSWORD", "testtest")
-        self.database = os.getenv("NEO4J_DATABASE", "travel")
+        self.database = os.getenv("NEO4J_DATABASE", "neo4j")
         
         # Initialize Neo4j driver
         self.driver = GraphDatabase.driver(self.uri, auth=(self.user, self.password))
