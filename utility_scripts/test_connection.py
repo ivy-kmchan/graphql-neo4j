@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def main():
-    uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+    uri = os.getenv("NEO4J_URI")  # Required - set in .env
     user = os.getenv("NEO4J_USER", "neo4j")
-    password = os.getenv("NEO4J_PASSWORD")
-    database = os.getenv("NEO4J_DATABASE", "travel")
+    password = os.getenv("NEO4J_PASSWORD")  # Required - set in .env
+    database = os.getenv("NEO4J_DATABASE", "neo4j")  # Changed from 'travel' to 'neo4j' for Aura
     
     print(f"Testing connection to: {uri}")
     print(f"User: {user}")

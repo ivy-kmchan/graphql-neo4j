@@ -59,7 +59,7 @@ const typeDefs = `
   }
 `;
 
-const database = process.env.NEO4J_DATABASE || 'travel';
+const database = process.env.NEO4J_DATABASE || 'neo4j';  // Changed default from 'travel' to 'neo4j' for Aura
 const port = process.env.PORT ? Number(process.env.PORT) : 4010;
 
 const driver = neo4j.driver(
