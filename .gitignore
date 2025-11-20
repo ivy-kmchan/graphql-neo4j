@@ -9,8 +9,9 @@ venv/
 .env
 .streamlit/secrets.toml
 
-# local data exports (seed-data/ is tracked, data/ is ignored)
+# local data exports (seed-data/ is tracked, data/ and exports/ are ignored)
 data/
+exports/
 
 # sample config only; real one lives in local Neo4j Desktop app
 neo4j config settings/neo4j.conf
