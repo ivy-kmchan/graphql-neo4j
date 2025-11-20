@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jvcoffey/graphql-neo4j-project.git"
+    "url": "git+https://github.com/ivy-kmchan/graphql-neo4j.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jvcoffey/graphql-neo4j-project/issues"
+    "url": "https://github.com/ivy-kmchan/graphql-neo4j/issues"
   },
-  "homepage": "https://github.com/jvcoffey/graphql-neo4j-project#readme",
+  "homepage": "https://github.com/ivy-kmchan/graphql-neo4j#readme",
   "dependencies": {
     "@neo4j/graphql": "^7.2.13",
     "apollo-server": "^3.13.0",
