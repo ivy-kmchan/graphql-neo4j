@@ -74,8 +74,13 @@ class TravelChatbot:
             ),
             Tool(
                 name="search_places_by_cuisine",
-                description="Find places that serve specific cuisine types",
+                description="Find places that serve specific cuisine types (sushi, ramen, cafe, etc.). Can handle singular or plural forms.",
                 func=self._search_places_by_cuisine
+            ),
+            Tool(
+                name="search_cuisine_by_location",
+                description="Find places serving specific cuisine in a specific location (e.g., 'cafes in Tokyo', 'sushi in Kyoto'). Use this when the query includes both a cuisine type AND a location.",
+                func=self._search_cuisine_by_location
             ),
             Tool(
                 name="search_places_nearby",
@@ -158,14 +163,17 @@ class TravelChatbot:
     
     def _search_places_by_cuisine(self, cuisine: str) -> str:
         """Find places that serve specific cuisine."""
+        # Normalize common plural forms and variations
+        cuisine_normalized = cuisine.lower().rstrip('s')  # Remove trailing 's' for plural
+        
         query = """
         MATCH (p:Place)-[:SERVES_CUISINE]->(ct:CuisineType)
-        WHERE ct.name CONTAINS $cuisine
+        WHERE toLower(ct.name) CONTAINS $cuisine OR $cuisine CONTAINS toLower(ct.name)
         RETURN p.name as name, p.address as address, p.prefecture as prefecture,
                collect(ct.name) as cuisines
         LIMIT 10
         """
-        results = self._run_cypher_query(query, {"cuisine": cuisine.lower()})
+        results = self._run_cypher_query(query, {"cuisine": cuisine_normalized})
         
         if not results:
             return f"No places serving {cuisine} cuisine found"
@@ -174,6 +182,52 @@ class TravelChatbot:
         for i, place in enumerate(results, 1):
             response += f"**{i}. {place['name']}**\n"
             response += f"📍 {place['address']}\n"
+            response += f"🍽️ Cuisines: {', '.join(place['cuisines'])}\n\n"
+        
+        return response
+    
+    def _search_cuisine_by_location(self, query_input: str) -> str:
+        """Find places serving specific cuisine in a specific location.
+        Handles queries like 'cafes in Tokyo' or 'sushi restaurants in Kyoto'.
+        """
+        # Try to parse the input to extract cuisine and location
+        # Common patterns: "X in Y", "Y X"
+        parts = query_input.lower().split(' in ')
+        
+        if len(parts) == 2:
+            cuisine = parts[0].strip().rstrip('s')  # Remove trailing 's'
+            location = parts[1].strip()
+        else:
+            # Try to split by common location keywords
+            words = query_input.lower().split()
+            if len(words) >= 2:
+                cuisine = words[0].rstrip('s')
+                location = ' '.join(words[1:])
+            else:
+                return "Please specify both a cuisine type and location (e.g., 'cafes in Tokyo')"
+        
+        query = """
+        MATCH (p:Place)-[:SERVES_CUISINE]->(ct:CuisineType)
+        WHERE (toLower(ct.name) CONTAINS $cuisine OR $cuisine CONTAINS toLower(ct.name))
+          AND (p.prefecture CONTAINS $location OR p.address CONTAINS $location)
+        RETURN p.name as name, p.address as address, p.prefecture as prefecture,
+               collect(ct.name) as cuisines
+        LIMIT 15
+        """
+        results = self._run_cypher_query(query, {
+            "cuisine": cuisine,
+            "location": location.title()  # Capitalize location for better matching
+        })
+        
+        if not results:
+            return f"No {cuisine} places found in {location}. Try a broader search or check the spelling."
+        
+        response = f"🍜 **Found {len(results)} {cuisine} places in {location}:**\n\n"
+        for i, place in enumerate(results, 1):
+            response += f"**{i}. {place['name']}**\n"
+            response += f"📍 {place['address']}\n"
+            if place['prefecture']:
+                response += f"🗾 Prefecture: {place['prefecture']}\n"
             response += f"🍽️ Cuisines: {', '.join(place['cuisines'])}\n\n"
         
         return response
