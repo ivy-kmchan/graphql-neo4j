@@ -206,17 +206,19 @@ class TravelChatbot:
             else:
                 return "Please specify both a cuisine type and location (e.g., 'cafes in Tokyo')"
         
+        # Use exact match for cuisine type (more reliable) and case-insensitive location matching
         query = """
         MATCH (p:Place)-[:SERVES_CUISINE]->(ct:CuisineType)
-        WHERE (toLower(ct.name) CONTAINS $cuisine OR $cuisine CONTAINS toLower(ct.name))
-          AND (p.prefecture CONTAINS $location OR p.address CONTAINS $location)
+        WHERE toLower(ct.name) = toLower($cuisine)
+          AND (toLower(p.prefecture) CONTAINS toLower($location) OR toLower(p.address) CONTAINS toLower($location))
         RETURN p.name as name, p.address as address, p.prefecture as prefecture,
                collect(ct.name) as cuisines
-        LIMIT 15
+        ORDER BY p.name
+        LIMIT 20
         """
         results = self._run_cypher_query(query, {
             "cuisine": cuisine,
-            "location": location.title()  # Capitalize location for better matching
+            "location": location  # Use case-insensitive matching instead of .title()
         })
         
         if not results:
